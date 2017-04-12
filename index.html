@@ -1,0 +1,118 @@
+<html>
+  <head>
+
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+      <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js" integrity="sha256-lDaoGuONbVHFEV6ZW3GowBu4ECOTjDE14hleNVBvDW8=" crossorigin="anonymous"></script>
+
+      <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+      <link rel="stylesheet" href="index.css">
+   
+      <script>
+
+
+        var socket = io.connect('http://localhost:8888');
+
+        socket.on('sensor1', function (data) {
+          $("#sensor1").text(data.raw);          
+        });
+
+        socket.on('sensor2', function (data) {
+          $("#sensor2").text(data.raw);          
+        });
+
+        socket.on('sensor3', function (data) {
+          $("#sensor3").text(data.raw);          
+        });
+
+        socket.on('sensor4', function (data) {
+          $("#sensor4").text(data.raw);          
+        });
+
+      </script>
+
+  </head>
+
+  <body>    
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="#">Settings</a></li>
+            <li><a href="#">Profile</a></li>
+            <li><a href="#">Help</a></li>
+          </ul>
+
+    </nav>
+
+
+
+    <div class="container">
+
+    <div class="row">
+              <div class="col-md-2 sidebar">
+
+                  <ul class="nav nav-sidebar">
+                    <li class="active"><a href="#">Overview</a></li>
+                    <li><a href="#">Sensor 1</a></li>
+                    <li><a href="#">Sensor 2</a></li>
+                    <li><a href="#">Sensor 3</a></li>
+                  </ul>
+
+              </div>
+
+              <div class="col-md-10 main">
+
+
+                    <div class="row">
+        <div class="col-md-5">
+          
+                      Sensor 1
+
+            <div id="sensor1">111</div>
+            <a href="csvfile.csv" class="btn btn-success" role="button">CSV Download</a>
+        </div>
+
+        <div class="col-md-5">
+            
+                        Sensor 2
+
+            <div id="sensor2">222</div>
+            <a href="csvfile.csv" class="btn btn-success" role="button">CSV Download</a>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-5">
+          
+                      Sensor 3
+
+            <div id="sensor3">333</div>
+            <a href="csvfile.csv" class="btn btn-success" role="button">CSV Download</a>
+        </div>
+
+        <div class="col-md-5">
+          
+                      Sensor 4
+
+            <div id="sensor4">444</div>
+            <a href="csvfile.csv" class="btn btn-success" role="button">CSV Download</a>
+        </div>
+      </div>
+
+    </div>
+
+              </div>
+    </div>
+
+      
+    
+  </body>
+</html>
