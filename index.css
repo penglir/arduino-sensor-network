@@ -16,7 +16,7 @@ body {
 
 .main {
       position: fixed;
-      top: 50;
+      top: 20;
       right: 0;
       bottom: 0;
 
@@ -37,8 +37,8 @@ body {
   border-radius: 15px;
     background: rgb(27, 201, 142);
     padding: 0px; 
-    width: 200px;
-    line-height: 200px;  
+    width: 50px;
+    line-height: 50px;  
     font-size: xx-large;
 }
 
