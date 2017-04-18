@@ -1,4 +1,6 @@
-# Arduino_Sensor_Web_Interface
+# Arduino Web Monitor
+
+A web based Arduino monitor using Node.js on back-end and Bootstrap on front-end.
 
 How to use:
 
