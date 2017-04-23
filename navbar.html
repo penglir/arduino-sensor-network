@@ -1,0 +1,88 @@
+<html>
+<head>
+
+  <link rel="import" href="import.html">
+
+
+  <!-- <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script> -->
+
+  <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script> -->
+
+
+
+  <!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"> -->
+
+  <link rel="import" href="calibrate.html">
+
+
+    <script>
+
+      function calibrate() {
+          
+        console.log("calibrate");
+
+        dialog.dialog( "open" );
+
+      }
+
+    </script>
+
+      </head>
+
+      <body>    
+
+        <nav class="navbar navbar-default navbar-fixed-top">
+
+          <ul class="nav navbar-nav navbar-left">
+
+            <a class="navbar-brand">
+                <img  class="navbar-brand-img" alt="Brand" src="images/mines_logo.png">
+                <!-- Colorado School of Mines -->
+            </a>   
+
+
+            <li><a href="index.html">Dashboard</a></li>
+            <li><a href="calendar.html">History</a></li>
+
+            <li class="dropdown">
+              
+              <a  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Calibrate<span class="caret"></span></a>
+
+              <ul class="dropdown-menu">
+                <li><a href="#" onclick="calibrate();">Vernier Nitrate</a></li>
+                
+                <li role="separator" class="divider"></li>
+
+                <li><a href="#" onclick="calibrate();">Vernier Ammonium</a></li>
+                
+                <li role="separator" class="divider"></li>
+
+                <li><a href="#" onclick="calibrate();">Atlas Scientific pH</a></li>
+
+                <li role="separator" class="divider"></li>
+
+                <li><a href="#" onclick="calibrate();">Atlas Scientific ORP</a></li>
+
+                <li role="separator" class="divider"></li>
+
+                <li><a href="#" onclick="calibrate();">Atlas Scientific Tempeture</a></li>
+              </ul>
+            </li>
+
+
+             <li><a href="#">Help</a></li>
+
+
+
+          </ul>
+
+        </nav>
+
+
+
+
+       
+
+
+      </body>
+      </html>

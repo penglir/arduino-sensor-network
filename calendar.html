@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+
+
+  <link rel="import" href="import.html">
+
+
+<script>
+
+	$(document).ready(function() {
+		
+    	$('#navbar').load('navbar.html');
+
+
+		$('#calendar').fullCalendar({
+			header: {
+				// left: 'prev,next today',
+				// center: 'title',
+				// right: 'month,agendaWeek,agendaDay,listWeek'
+			},
+			defaultDate: '2017-04-12',
+			navLinks: false, // can click day/week names to navigate views
+			editable: false,
+			eventLimit: false, // allow "more" link when too many events
+			selectable: false,
+
+			select: function(start, end) {
+				var title = prompt('prompt title:');
+				
+				$('#calendar').fullCalendar('unselect');
+			},
+
+
+			events: [
+				{
+					title: 'CSV',
+					start: '2017-04-01',
+					url: 'csvfile.csv',
+					color: 'rgb(92, 184, 92)',
+				},
+				
+				{
+					title: 'CSV',
+					start: '2017-04-11',
+					url: 'csvfile.csv',
+					color: 'rgb(92, 184, 92)',
+				},
+				
+				{
+					title: 'CSV',
+					start: '2017-04-13',
+					url: 'csvfile.csv',
+					color: 'rgb(92, 184, 92)',
+				},
+				{
+					title: 'CSV',
+					start: '2017-04-28',
+					url: 'csvfile.csv',
+					color: 'rgb(92, 184, 92)',
+				}
+			]
+		});
+		
+	});
+
+</script>
+<style>
+
+	/*body {
+		margin: 40px 10px;
+		padding: 0;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		font-size: 14px;
+	}*/
+
+	#calendar {
+		max-width: 60%;
+		margin: auto;
+		margin-top: 10px;
+	}
+
+</style>
+</head>
+<body>
+
+	<div id="navbar"></div>
+
+	<div id='calendar'></div>
+
+</body>
+</html>
