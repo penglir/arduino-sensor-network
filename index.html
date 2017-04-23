@@ -1,164 +1,162 @@
 <html>
-  <head>
-
-      <meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
 
 
-      <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <link rel="import" href="import.html">
+
+
+  <script>
+
+    $(document).ready(function() {
     
-      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+      $('#navbar').load('navbar.html');
+    });
 
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js" integrity="sha256-lDaoGuONbVHFEV6ZW3GowBu4ECOTjDE14hleNVBvDW8=" crossorigin="anonymous"></script>
+    var socket = io.connect('http://localhost:8888');
 
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js"></script>
+    socket.on('sensor1', function (data) {
+      $("#sensor1").text(data.raw);          
+    });
 
-      <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    socket.on('sensor2', function (data) {
+      $("#sensor2").text(data.raw);          
+    });
 
-      <link rel="stylesheet" href="index.css">
-   
-      <script>
+    socket.on('sensor3', function (data) {
+      $("#sensor3").text(data.raw);          
+    });
 
-
-        var socket = io.connect('http://localhost:8888');
-
-        socket.on('sensor1', function (data) {
-          $("#sensor1").text(data.raw);          
-        });
-
-        socket.on('sensor2', function (data) {
-          $("#sensor2").text(data.raw);          
-        });
-
-        socket.on('sensor3', function (data) {
-          $("#sensor3").text(data.raw);          
-        });
-
-        socket.on('sensor4', function (data) {
-          $("#sensor4").text(data.raw);          
-        });
+    socket.on('sensor4', function (data) {
+      $("#sensor4").text(data.raw);          
+    });
 
 
 
-        chartdata1 = [{x:1,y:1}, {x:2,y:10}, {x:3,y:5},{x:4,y:12}];
-        chartdata2 = [{x:1,y:1}, {x:2,y:10}, {x:3,y:5},{x:4,y:12}];
-        chartdata3 = [{x:1,y:1}, {x:2,y:10}, {x:3,y:5},{x:4,y:12}];
-        chartdata4 = [{x:1,y:1}, {x:2,y:10}, {x:3,y:5},{x:4,y:12}];
+    chartdata1 = [{x:1,y:1}, {x:2,y:10}, {x:3,y:5},{x:4,y:12}];
+    chartdata2 = [{x:1,y:1}, {x:2,y:10}, {x:3,y:5},{x:4,y:12}];
+    chartdata3 = [{x:1,y:1}, {x:2,y:10}, {x:3,y:5},{x:4,y:12}];
+    chartdata4 = [{x:1,y:1}, {x:2,y:10}, {x:3,y:5},{x:4,y:12}];
 
-        var lastx = 5;
+    var lastx = 5;
 
-        var data1 = {
-                datasets: [{
-                    label: 'Sensor 1',
-                    data: chartdata1,
-                    backgroundColor: [
-                        'rgba(27, 201, 142, 1)',      
-                    ],
-                    borderColor : [
-                        'rgba(27, 201, 142, 1)',      
-                    ],
-                    fill: false,
-                }]
-            };
-
-
-var data2 = {
-                datasets: [{
-                    label: 'Sensor 2',
-                    data: chartdata2,
-                    backgroundColor: [
-                        'rgba(230, 71, 89, 1)',      
-                    ],
-                    borderColor : [
-                        'rgba(230, 71, 89, 1)',      
-                    ],
-                    fill: false,
-                }]
-            };
-
-            var data3 = {
-                datasets: [{
-                    label: 'Sensor 3',
-                    data: chartdata3,
-                    backgroundColor: [
-                        'rgba(159, 134, 255, 1)',      
-                    ],
-                    borderColor : [
-                        'rgba(159, 134, 255, 1)',      
-                    ],
-                    fill: false,
-                }]
-            };
+    var data1 = {
+      datasets: [{
+        label: 'Sensor 1',
+        data: chartdata1,
+        backgroundColor: [
+        'rgb(27, 201, 142)',      
+        ],
+        borderColor : [
+        'rgb(27, 201, 142)',      
+        ],
+        fill: false,
+      }]
+    };
 
 
-var data4 = {
-                datasets: [{
-                    label: 'Sensor 4',
-                    data: chartdata4,
-                    backgroundColor: [
-                        'rgba(228, 216, 54, 1)',      
-                    ],
-                    borderColor : [
-                        'rgba(228, 216, 54, 1)',      
-                    ],
-                    fill: false,
-                }]
-            };
-          var options =  {
-                  scales: {
-                      xAxes: [{
-                          type: 'linear',
-                          position: 'bottom'
-                      }]
-                  }
-              };
+    var data2 = {
+      datasets: [{
+        label: 'Sensor 2',
+        data: chartdata2,
+        backgroundColor: [
+        'rgb(230, 71, 89)',      
+        ],
+        borderColor : [
+        'rgb(230, 71, 89)',      
+        ],
+        fill: false,
+      }]
+    };
 
-            var chart1, chart2, chart3, chart4;
-
-            window.onload = function() {
-              var ctx1 = document.getElementById("chart1");
-              chart1 = new Chart(ctx1, {
-                  type: 'line',
-                  data: data1,
-                  options : options,
-              });
-
-              var ctx2 = document.getElementById("chart2");
-chart2 = new Chart(ctx2, {
-                  type: 'line',
-                  data: data2,
-                  options : options,
-              });
-
-              var ctx3 = document.getElementById("chart3");
-
-chart3 = new Chart(ctx3, {
-                  type: 'line',
-                  data: data3,
-                  options : options,
-              });
+    var data3 = {
+      datasets: [{
+        label: 'Sensor 3',
+        data: chartdata3,
+        backgroundColor: [
+        'rgb(159, 134, 255)',      
+        ],
+        borderColor : [
+        'rgb(159, 134, 255)',      
+        ],
+        fill: false,
+      }]
+    };
 
 
-              var ctx4 = document.getElementById("chart4");
+    var data4 = {
+      datasets: [{
+        label: 'Sensor 4',
+        data: chartdata4,
+        backgroundColor: [
+        'rgb(228, 216, 54)',      
+        ],
+        borderColor : [
+        'rgb(228, 216, 54)',      
+        ],
+        fill: false,
+      }]
+    };
+    var options =  {
+      scales: {
+        xAxes: [{
+          type: 'linear',
+          position: 'bottom'
+        }]
+      }
+    };
 
-chart4 = new Chart(ctx4, {
-                  type: 'line',
-                  data: data4,
-                  options : options,
-              });
+    var chart1, chart2, chart3, chart4;
 
-            }
+    window.onload = function() {
+      var ctx1 = document.getElementById("chart1");
+      chart1 = new Chart(ctx1, {
+        type: 'line',
+        data: data1,
+        options : options,
+      });
 
-          
+      var ctx2 = document.getElementById("chart2");
+      chart2 = new Chart(ctx2, {
+        type: 'line',
+        data: data2,
+        options : options,
+      });
+
+      var ctx3 = document.getElementById("chart3");
+
+      chart3 = new Chart(ctx3, {
+        type: 'line',
+        data: data3,
+        options : options,
+      });
 
 
-          setInterval(function() {
+      var ctx4 = document.getElementById("chart4");
 
-            chartdata1.push({x: lastx, y : Math.random() * 10});
-            chartdata2.push({x: lastx, y : Math.random() * 10});
-            chartdata3.push({x: lastx, y : Math.random() * 10});
-            chartdata4.push({x: lastx, y : Math.random() * 10});
+      chart4 = new Chart(ctx4, {
+        type: 'line',
+        data: data4,
+        options : options,
+      });
 
-            lastx += 1;
+    }
+
+
+
+
+    setInterval(function() {
+
+      if (chartdata1.length > 10) {chartdata1.shift()}
+      if (chartdata2.length > 10) {chartdata2.shift()}
+      if (chartdata3.length > 10) {chartdata3.shift()}
+      if (chartdata4.length > 10) {chartdata4.shift()}
+
+      chartdata1.push({x: lastx, y : Math.random() * 10});
+      chartdata2.push({x: lastx, y : Math.random() * 10});
+      chartdata3.push({x: lastx, y : Math.random() * 10});
+      chartdata4.push({x: lastx, y : Math.random() * 10});
+
+      lastx += 1;
             // chartdata.shift();
 
             console.log("1 second");
@@ -178,109 +176,104 @@ chart4 = new Chart(ctx4, {
             // myChart.data.datasets[0].data
             chart4.update();
 
-          }, 1000);
+          }, 3000);
+
+
+    function menuSelected() {
+
+      console.log("menu selected");
+
+    }
+
+    
+    function calibrate() {
+
+      console.log("calibrate");
+      prompt("Calibrate");
+
+    }
+
+        </script>
+
+      </head>
+
+      <body>    
+
+        <div id="navbar"></div>
+
+ 
 
 
 
 
-      </script>
-
-  </head>
-
-  <body>    
-
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-
-        <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Dashboard</a></li>
-            <li><a href="#">Settings</a></li>
-            <li><a href="#">Profile</a></li>
-            <li><a href="#">Help</a></li>
-          </ul>
-
-    </nav>
 
 
 
 
-    <div class="container">
-
-    <div class="row">
-              <div class="col-md-2 sidebar">
-
-                  <ul class="nav nav-sidebar">
-                    <li class="active"><a href="#">Overview</a></li>
-                    <li><a href="#">Sensor 1</a></li>
-                    <li><a href="#">Sensor 2</a></li>
-                    <li><a href="#">Sensor 3</a></li>
-                  </ul>
-
-              </div>
-
-              <div class="col-md-10 main">
 
 
-                    <div class="row">
-        <div class="col-md-5">
-          
+            <div class="container-fluid">
+
+        
+
+
+              <div class="row">
+                
+                    <div class="col-md-6">
                       Sensor 1
-
-            <div id="sensor1">111</div>
-            <a href="csvfile.csv" class="btn btn-success" role="button">CSV Download</a>
-
-                            <canvas id="chart1"></canvas>
-
-
-        </div>
-
-        <div class="col-md-5">
-            
-                        Sensor 2
-
-            <div id="sensor2">222</div>
-            <a href="csvfile.csv" class="btn btn-success" role="button">CSV Download</a>
+                      <div id="sensor1">111</div>
+                      <!-- <a href="#" onclick="calibrate();" class="btn btn-success" role="button">Calibrate</a> -->
+                      <canvas id="chart1"></canvas>
+                    </div>
 
 
-                                          <canvas id="chart2"></canvas>
+                    <div class="col-md-6">
+                      Sensor 2
 
-
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-5">
-          
-                      Sensor 3
-
-            <div id="sensor3">333</div>
-            <a href="csvfile.csv" class="btn btn-success" role="button">CSV Download</a>
-
-
-                            <canvas id="chart3"></canvas>
-
-
-        </div>
-
-        <div class="col-md-5">
-          
-                      Sensor 4
-
-            <div id="sensor4">444</div>
-            <a href="csvfile.csv" class="btn btn-success" role="button">CSV Download</a>
-
-
-                            <canvas id="chart4"></canvas>
-
-
-        </div>
-      </div>
-
-    </div>
+                      <div id="sensor2">222</div>
+                      <!-- <a href="csvfile.csv" class="btn btn-success" role="button">Calibrate</a> -->
+                      <canvas id="chart2"></canvas>
+                    </div>
 
               </div>
+
+
+              <div class="row">
+
+                    <div class="col-md-6">
+                      Sensor 3
+                      <div id="sensor3">333</div>
+                      <!-- <a href="csvfile.csv" class="btn btn-success" role="button">Calibrate</a> -->
+                      <canvas id="chart3"></canvas>
+                    </div>
+
+                    <div class="col-md-6">
+                      Sensor 4
+                      <div id="sensor4">444</div>
+                      <!-- <a href="csvfile.csv" class="btn btn-success" role="button">csv download</a> -->
+                      <canvas id="chart4"></canvas>
+                    </div>
+
+              </div>
+
+
+
     </div>
+
+       
+
+
+
+
+
+
+
+
+
+
 
       
-    
-  </body>
-</html>
+
+
+      </body>
+      </html>
