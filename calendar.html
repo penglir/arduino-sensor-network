@@ -9,8 +9,13 @@
 
 <script>
 
+var color1 = 'rgb(27, 201, 142)';
+var color2 = 'rgb(230, 71, 89)';
+var color3 = 'rgb(159, 134, 255)';
+var color4 = 'rgb(228, 216, 54)';
+
 	$(document).ready(function() {
-		
+
     	$('#navbar').load('navbar.html');
 
 
@@ -20,7 +25,7 @@
 				// center: 'title',
 				// right: 'month,agendaWeek,agendaDay,listWeek'
 			},
-			defaultDate: '2017-04-12',
+			defaultDate: '2017-05-12',
 			navLinks: false, // can click day/week names to navigate views
 			editable: false,
 			eventLimit: false, // allow "more" link when too many events
@@ -28,41 +33,244 @@
 
 			select: function(start, end) {
 				var title = prompt('prompt title:');
-				
+
 				$('#calendar').fullCalendar('unselect');
 			},
 
 
 			events: [
-				{
-					title: 'CSV',
-					start: '2017-04-01',
+
+                {
+					title: '10 Secs',
+					start: '2017-04-30',
 					url: 'csvfile.csv',
-					color: 'rgb(92, 184, 92)',
+					color: color1,
 				},
-				
-				{
-					title: 'CSV',
-					start: '2017-04-11',
+                {
+                    title: '60 Secs',
+                    start: '2017-04-30',
+                    url: 'csvfile.csv',
+                    color: color2,
+                },
+                {
+					title: '600 Secs',
+					start: '2017-04-30',
 					url: 'csvfile.csv',
-					color: 'rgb(92, 184, 92)',
+					color: color3,
 				},
-				
-				{
-					title: 'CSV',
-					start: '2017-04-13',
+
+                {
+					title: '10 Secs',
+					start: '2017-05-01',
 					url: 'csvfile.csv',
-					color: 'rgb(92, 184, 92)',
+					color: color1,
 				},
-				{
-					title: 'CSV',
-					start: '2017-04-28',
+                {
+                    title: '60 Secs',
+                    start: '2017-05-01',
+                    url: 'csvfile.csv',
+                    color: color2,
+                },
+                {
+					title: '600 Secs',
+					start: '2017-05-01',
 					url: 'csvfile.csv',
-					color: 'rgb(92, 184, 92)',
-				}
+					color: color3,
+				},
+
+                {
+					title: '10 Secs',
+					start: '2017-05-02',
+					url: 'csvfile.csv',
+					color: color1,
+				},
+                {
+                    title: '60 Secs',
+                    start: '2017-05-02',
+                    url: 'csvfile.csv',
+                    color: color2,
+                },
+                {
+					title: '600 Secs',
+					start: '2017-05-02',
+					url: 'csvfile.csv',
+					color: color3,
+				},
+
+                {
+					title: '10 Secs',
+					start: '2017-05-03',
+					url: 'csvfile.csv',
+					color: color1,
+				},
+                {
+                    title: '60 Secs',
+                    start: '2017-05-03',
+                    url: 'csvfile.csv',
+                    color: color2,
+                },
+                {
+					title: '600 Secs',
+					start: '2017-05-03',
+					url: 'csvfile.csv',
+					color: color3,
+				},
+
+                {
+					title: '10 Secs',
+					start: '2017-05-04',
+					url: 'csvfile.csv',
+					color: color1,
+				},
+                {
+                    title: '60 Secs',
+                    start: '2017-05-04',
+                    url: 'csvfile.csv',
+                    color: color2,
+                },
+                {
+					title: '600 Secs',
+					start: '2017-05-04',
+					url: 'csvfile.csv',
+					color: color3,
+				},
+
+                {
+					title: '10 Secs',
+					start: '2017-05-05',
+					url: 'csvfile.csv',
+					color: color1,
+				},
+                {
+                    title: '60 Secs',
+                    start: '2017-05-05',
+                    url: 'csvfile.csv',
+                    color: color2,
+                },
+                {
+					title: '600 Secs',
+					start: '2017-05-05',
+					url: 'csvfile.csv',
+					color: color3,
+				},
+
+                {
+					title: '10 Secs',
+					start: '2017-05-06',
+					url: 'csvfile.csv',
+					color: color1,
+				},
+                {
+                    title: '60 Secs',
+                    start: '2017-05-06',
+                    url: 'csvfile.csv',
+                    color: color2,
+                },
+                {
+					title: '600 Secs',
+					start: '2017-05-06',
+					url: 'csvfile.csv',
+					color: color3,
+				},
+
+                {
+					title: '10 Secs',
+					start: '2017-05-07',
+					url: 'csvfile.csv',
+					color: color1,
+				},
+                {
+                    title: '60 Secs',
+                    start: '2017-05-07',
+                    url: 'csvfile.csv',
+                    color: color2,
+                },
+                {
+					title: '600 Secs',
+					start: '2017-05-07',
+					url: 'csvfile.csv',
+					color: color3,
+				},
+
+                {
+					title: '10 Secs',
+					start: '2017-05-08',
+					url: 'csvfile.csv',
+					color: color1,
+				},
+                {
+                    title: '60 Secs',
+                    start: '2017-05-08',
+                    url: 'csvfile.csv',
+                    color: color2,
+                },
+                {
+					title: '600 Secs',
+					start: '2017-05-08',
+					url: 'csvfile.csv',
+					color: color3,
+				},
+
+                {
+					title: '10 Secs',
+					start: '2017-05-09',
+					url: 'csvfile.csv',
+					color: color1,
+				},
+                {
+                    title: '60 Secs',
+                    start: '2017-05-09',
+                    url: 'csvfile.csv',
+                    color: color2,
+                },
+                {
+					title: '600 Secs',
+					start: '2017-05-09',
+					url: 'csvfile.csv',
+					color: color3,
+				},
+
+                {
+					title: '10 Secs',
+					start: '2017-05-10',
+					url: 'csvfile.csv',
+					color: color1,
+				},
+                {
+                    title: '60 Secs',
+                    start: '2017-05-10',
+                    url: 'csvfile.csv',
+                    color: color2,
+                },
+                {
+					title: '600 Secs',
+					start: '2017-05-10',
+					url: 'csvfile.csv',
+					color: color3,
+				},
+
+				{
+					title: '10 Secs',
+					start: '2017-05-11',
+					url: 'csvfile.csv',
+					color: color1,
+				},
+                {
+                    title: '60 Secs',
+                    start: '2017-05-11',
+                    url: 'csvfile.csv',
+                    color: color2,
+                },
+                {
+					title: '600 Secs',
+					start: '2017-05-11',
+					url: 'csvfile.csv',
+					color: color3,
+				},
+
 			]
 		});
-		
+
 	});
 
 </script>

@@ -4,31 +4,38 @@
 
     <link rel="import" href="import.html">
 
-
   <script>
 
     $(document).ready(function() {
-    
+
       $('#navbar').load('navbar.html');
     });
 
-    var socket = io.connect('http://localhost:8888');
+    // var socket = io.connect('http://localhost:8888');
+    // var socket = io.connect('http://192.168.1.15:8888');
+    var socket = io.connect(domain);
 
     socket.on('sensor1', function (data) {
-      $("#sensor1").text(data.raw);          
+
+    //   $("#sensor1").text(data.raw);
+        setupSensor1(data.raw);
+
     });
 
     socket.on('sensor2', function (data) {
-      $("#sensor2").text(data.raw);          
+
+    //   $("#sensor2").text(data.raw);
+        setupSensor2(data.raw);
+
     });
 
-    socket.on('sensor3', function (data) {
-      $("#sensor3").text(data.raw);          
-    });
+    // socket.on('sensor3', function (data) {
+      // $("#sensor3").text(data.raw);
+    // });
 
-    socket.on('sensor4', function (data) {
-      $("#sensor4").text(data.raw);          
-    });
+    // socket.on('sensor4', function (data) {
+      // $("#sensor4").text(data.raw);
+    // });
 
 
 
@@ -41,13 +48,13 @@
 
     var data1 = {
       datasets: [{
-        label: 'Sensor 1',
+        label: 'Vernier Ammonium (NO3)',
         data: chartdata1,
         backgroundColor: [
-        'rgb(27, 201, 142)',      
+        'rgb(27, 201, 142)',
         ],
         borderColor : [
-        'rgb(27, 201, 142)',      
+        'rgb(27, 201, 142)',
         ],
         fill: false,
       }]
@@ -56,13 +63,13 @@
 
     var data2 = {
       datasets: [{
-        label: 'Sensor 2',
+        label: 'Vernier Nitrate (NH4)',
         data: chartdata2,
         backgroundColor: [
-        'rgb(230, 71, 89)',      
+        'rgb(230, 71, 89)',
         ],
         borderColor : [
-        'rgb(230, 71, 89)',      
+        'rgb(230, 71, 89)',
         ],
         fill: false,
       }]
@@ -70,13 +77,13 @@
 
     var data3 = {
       datasets: [{
-        label: 'Sensor 3',
+        label: 'Altas pH',
         data: chartdata3,
         backgroundColor: [
-        'rgb(159, 134, 255)',      
+        'rgb(159, 134, 255)',
         ],
         borderColor : [
-        'rgb(159, 134, 255)',      
+        'rgb(159, 134, 255)',
         ],
         fill: false,
       }]
@@ -85,29 +92,35 @@
 
     var data4 = {
       datasets: [{
-        label: 'Sensor 4',
+        label: 'Altas ORP',
         data: chartdata4,
         backgroundColor: [
-        'rgb(228, 216, 54)',      
+        'rgb(228, 216, 54)',
         ],
         borderColor : [
-        'rgb(228, 216, 54)',      
+        'rgb(228, 216, 54)',
         ],
         fill: false,
       }]
     };
     var options =  {
-      scales: {
-        xAxes: [{
-          type: 'linear',
-          position: 'bottom'
-        }]
-      }
+        scales: {
+            xAxes: [{
+                type: 'linear',
+                position: 'bottom'
+            }]
+        },
+
+        title:{
+            display : false,
+            text : 'Title',
+        }
     };
 
     var chart1, chart2, chart3, chart4;
 
     window.onload = function() {
+
       var ctx1 = document.getElementById("chart1");
       chart1 = new Chart(ctx1, {
         type: 'line',
@@ -123,16 +136,13 @@
       });
 
       var ctx3 = document.getElementById("chart3");
-
       chart3 = new Chart(ctx3, {
         type: 'line',
         data: data3,
         options : options,
       });
 
-
       var ctx4 = document.getElementById("chart4");
-
       chart4 = new Chart(ctx4, {
         type: 'line',
         data: data4,
@@ -141,20 +151,47 @@
 
     }
 
+    function setupSensor1(data) {
 
+        $("#sensor1").text(data);
 
+        if (chartdata1.length >= 10) {chartdata1.shift()}
 
+        var time = new Date();
+        var time_format = time.getHours() + ':' + time.getMinutes() + ':'+time.getSeconds();
+        console.log(time_format);
+
+        chartdata1.push({x: lastx, y : data});
+        lastx += 1;
+        chart1.data.datasets[0].data = chartdata1;
+        chart1.update();
+
+    }
+
+    function setupSensor2(data) {
+
+        $("#sensor2").text(data);
+
+        if (chartdata2.length >= 10) {chartdata2.shift()}
+        chartdata2.push({x: lastx, y : data});
+        lastx += 1;
+        chart2.data.datasets[0].data = chartdata2;
+        chart2.update();
+
+    }
+
+/*
     setInterval(function() {
 
-      if (chartdata1.length > 10) {chartdata1.shift()}
-      if (chartdata2.length > 10) {chartdata2.shift()}
-      if (chartdata3.length > 10) {chartdata3.shift()}
-      if (chartdata4.length > 10) {chartdata4.shift()}
+      if (chartdata1.length >= 10) {chartdata1.shift()}
+      if (chartdata2.length >= 10) {chartdata2.shift()}
+      if (chartdata3.length >= 10) {chartdata3.shift()}
+      if (chartdata4.length >= 10) {chartdata4.shift()}
 
       chartdata1.push({x: lastx, y : Math.random() * 10});
       chartdata2.push({x: lastx, y : Math.random() * 10});
-      chartdata3.push({x: lastx, y : Math.random() * 10});
-      chartdata4.push({x: lastx, y : Math.random() * 10});
+      // chartdata3.push({x: lastx, y : Math.random() * 10});
+      // chartdata4.push({x: lastx, y : Math.random() * 10});
 
       lastx += 1;
             // chartdata.shift();
@@ -170,14 +207,14 @@
 
             chart3.data.datasets[0].data = chartdata3;
             // myChart.data.datasets[0].data
-            chart3.update();
+            // chart3.update();
 
             chart4.data.datasets[0].data = chartdata4;
             // myChart.data.datasets[0].data
-            chart4.update();
+            // chart4.update();
 
           }, 3000);
-
+*/
 
     function menuSelected() {
 
@@ -185,7 +222,7 @@
 
     }
 
-    
+
     function calibrate() {
 
       console.log("calibrate");
@@ -197,11 +234,11 @@
 
       </head>
 
-      <body>    
+      <body>
 
         <div id="navbar"></div>
 
- 
+
 
 
 
@@ -214,23 +251,23 @@
 
             <div class="container-fluid">
 
-        
+
 
 
               <div class="row">
-                
+
                     <div class="col-md-6">
-                      Sensor 1
-                      <div id="sensor1">111</div>
+                      <div class="sensor-name-label">Vernier Ammonium (NO3)</div>
+                      <div class="sensor-data-label" id="sensor1"></div>
                       <!-- <a href="#" onclick="calibrate();" class="btn btn-success" role="button">Calibrate</a> -->
                       <canvas id="chart1"></canvas>
                     </div>
 
 
                     <div class="col-md-6">
-                      Sensor 2
+                      <div class="sensor-name-label">Vernier Nitrate (NH4)</div>
 
-                      <div id="sensor2">222</div>
+                      <div class="sensor-data-label" id="sensor2"></div>
                       <!-- <a href="csvfile.csv" class="btn btn-success" role="button">Calibrate</a> -->
                       <canvas id="chart2"></canvas>
                     </div>
@@ -241,15 +278,19 @@
               <div class="row">
 
                     <div class="col-md-6">
-                      Sensor 3
-                      <div id="sensor3">333</div>
+
+                      <div class="sensor-name-label">Altas pH</div>
+
+                      <div class="sensor-data-label" id="sensor3"></div>
                       <!-- <a href="csvfile.csv" class="btn btn-success" role="button">Calibrate</a> -->
                       <canvas id="chart3"></canvas>
                     </div>
 
                     <div class="col-md-6">
-                      Sensor 4
-                      <div id="sensor4">444</div>
+
+                      <div class="sensor-name-label">Altas ORP</div>
+
+                      <div class="sensor-data-label" id="sensor4"></div>
                       <!-- <a href="csvfile.csv" class="btn btn-success" role="button">csv download</a> -->
                       <canvas id="chart4"></canvas>
                     </div>
@@ -260,7 +301,6 @@
 
     </div>
 
-       
 
 
 
@@ -272,7 +312,8 @@
 
 
 
-      
+
+
 
 
       </body>

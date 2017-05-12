@@ -13,103 +13,91 @@
     div#users-contain { width: 350px; margin: 20px 0; }
     div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
     div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
-    .ui-dialog .ui-state-error { padding: .3em; }
-    .validateTips { border: 1px solid transparent; padding: 0.3em; }
+    .ui-dialog .ui-state-error { padding: .3em; }*/
+    /*.validateTips { border: 1px solid transparent; padding: 0.3em; }
   </style>
 
 
   <script>
 
-    // var dialog, form;
+    var dialog, form;
+
+
+
 
 
   $( function()  {
-    
-    var dialog, form,
- 
-      // From http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29
-      emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
-      name = $( "#name" ),
-      email = $( "#email" ),
-      password = $( "#password" ),
-      allFields = $( [] ).add( name ).add( email ).add( password ),
-      tips = $( ".validateTips" );
- 
-    
- 
- 
-    function addUser() {
-      var valid = true;
-      
- 
-      if ( valid ) {
-        $( "#users tbody" ).append( "<tr>" +
-          "<td>" + name.val() + "</td>" +
-          "<td>" + email.val() + "</td>" +
-          "<td>" + password.val() + "</td>" +
-        "</tr>" );
-        dialog.dialog( "close" );
-      }
-      return valid;
-    }
- 
+
+
+
+
+
+
+
     dialog = $( "#dialog-form" ).dialog({
       autoOpen: false,
       height: 500,
       width: 350,
       modal: true,
       buttons: {
-        "Calibrate": addUser,
+        Submit: function() {
+          console.log("submit");
+          dialog.dialog( "close" );
+        },
         Cancel: function() {
           dialog.dialog( "close" );
         }
       },
-      close: function() {
-        form[ 0 ].reset();
-        allFields.removeClass( "ui-state-error" );
-      }
     });
- 
-    form = dialog.find( "form" ).on( "submit", function( event ) {
-      event.preventDefault();
-      addUser();
-    });
- 
+
+
+
+
+
+
     $( "#create-user" ).button().on( "click", function() {
       dialog.dialog( "open" );
     });
+
+
+
+
   } );
+
+
+
   </script>
 </head>
+
 <body>
- 
+
 <div id="dialog-form" title="Calibrate">
-  <p class="validateTips">Nitrate Ion-Selective Electrode</p>
- 
+
   <form>
     <fieldset>
       <label for="name">High Standard Concentration</label>
-      <input type="text" name="name" id="name" value="100 mg/L" class="text ui-widget-content ui-corner-all">
+      <input type="text" name="name" id="name1" value="100 mg/L" class="text ui-widget-content ui-corner-all">
 
       <label for="email">High Standard Voltage</label>
-      <input type="text" name="email" id="email" value="1 mV" class="text ui-widget-content ui-corner-all">
+      <input type="text" name="email" id="email2" value="1 mV" class="text ui-widget-content ui-corner-all">
 
       <label for="name">Low Standard Concentration</label>
-      <input type="text" name="name" id="name" value="100 mg/L" class="text ui-widget-content ui-corner-all">
+      <input type="text" name="name" id="name3" value="100 mg/L" class="text ui-widget-content ui-corner-all">
 
       <label for="email">Low Standard Voltage</label>
-      <input type="text" name="email" id="email" value="3 mV" class="text ui-widget-content ui-corner-all">
- 
+      <input type="text" name="email" id="email4" value="3 mV" class="text ui-widget-content ui-corner-all">
+
       <!-- Allow form submission with keyboard without duplicating the dialog button -->
       <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
     </fieldset>
   </form>
+
 </div>
- 
- 
+
+
 
 <button id="create-user">Calibrate</button>
- 
- 
+
+
 </body>
 </html>

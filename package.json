@@ -4,11 +4,13 @@
   "description": "Testing node, web sockets, johnny-five, arduino",
   "main": "webtest.js",
   "dependencies": {
-    "socket.io": "latest",
-    "johnny-five": "latest",
+    "express": "^4.15.2",
+    "formidable": "^1.1.1",
+    "fs": "latest",
     "http": "latest",
+    "johnny-five": "latest",
     "path": "latest",
-    "fs": "latest"
+    "socket.io": "latest"
   },
   "devDependencies": {},
   "scripts": {

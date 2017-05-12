@@ -36,26 +36,41 @@ body {
 
   border-radius: 15px;
     background: rgb(27, 201, 142);
-    padding: 0px; 
+    padding: 0px;
     width: 50px;
-    line-height: 50px;  
+    line-height: 50px;
     font-size: xx-large;
 }*/
 
 #sensor1 {
-    background: rgb(27, 201, 142);
+    /*background: rgb(27, 201, 142);*/
+    color: rgb(27, 201, 142);
 }
 
 #sensor2 {
-    background: rgb(230, 71, 89);
+    /*background: rgb(230, 71, 89);*/
+    color: rgb(230, 71, 89);
 }
 
 #sensor3 {
-    background: rgb(159, 134, 255);
+    /*background: rgb(159, 134, 255);*/
+    color: rgb(159, 134, 255);
 }
 
 #sensor4 {
-    background: rgb(228, 216, 54);
+    /*background: rgb(228, 216, 54);*/
+    color: rgb(228, 216, 54);
+}
+
+.sensor-data-label {
+  /*margin: 0 auto;*/
+  text-align: center;
+  font-size: 300%;
+}
+
+.sensor-name-label {
+  text-align: center;
+
 }
 
 /*.col-md-5 {
@@ -82,7 +97,7 @@ body, html, .container-fluid {
 
 .navbar-brand{
   padding-left:   30px;
-  padding-right:  20px; 
+  padding-right:  20px;
   padding-top:    5px;
   padding-bottom: 5px;
 }
@@ -90,4 +105,3 @@ body, html, .container-fluid {
 .navbar-brand-img {
   height: 100%;
 }
-

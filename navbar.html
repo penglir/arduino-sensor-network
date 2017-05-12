@@ -18,10 +18,10 @@
     <script>
 
       function calibrate() {
-          
+
         console.log("calibrate");
 
-        dialog.dialog( "open" );
+        // dialog.dialog( "open" );
 
       }
 
@@ -29,7 +29,7 @@
 
       </head>
 
-      <body>    
+      <body>
 
         <nav class="navbar navbar-default navbar-fixed-top">
 
@@ -38,23 +38,23 @@
             <a class="navbar-brand">
                 <img  class="navbar-brand-img" alt="Brand" src="images/mines_logo.png">
                 <!-- Colorado School of Mines -->
-            </a>   
+            </a>
 
 
             <li><a href="index.html">Dashboard</a></li>
             <li><a href="calendar.html">History</a></li>
 
             <li class="dropdown">
-              
+
               <a  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Calibrate<span class="caret"></span></a>
 
               <ul class="dropdown-menu">
-                <li><a href="#" onclick="calibrate();">Vernier Nitrate</a></li>
-                
+                <li><a href="calibrate_vernier_nitrate.html" onclick="calibrate();">Vernier Nitrate</a></li>
+
                 <li role="separator" class="divider"></li>
 
-                <li><a href="#" onclick="calibrate();">Vernier Ammonium</a></li>
-                
+                <li><a href="calibrate_vernier_nitrate.html" onclick="calibrate();">Vernier Ammonium</a></li>
+
                 <li role="separator" class="divider"></li>
 
                 <li><a href="#" onclick="calibrate();">Atlas Scientific pH</a></li>
@@ -81,7 +81,7 @@
 
 
 
-       
+
 
 
       </body>
