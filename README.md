@@ -1,4 +1,4 @@
-# Arduino Web Monitor
+# Arduino Sensor Network
 
 A web based Arduino monitor using Node.js on back-end and Bootstrap on front-end.
 
