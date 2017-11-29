@@ -2,4 +2,4 @@
 
 A web based Arduino monitor using Node.js on back-end and Bootstrap on front-end.
 
-[#Setup Guide](https://pengli-csm.gitbooks.io/arduino-sensor-network-setup-guide/)
+[Environment Setup Guide](https://pengli-csm.gitbooks.io/arduino-sensor-network-setup-guide/)
