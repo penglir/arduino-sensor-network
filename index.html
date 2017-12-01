@@ -1,320 +1,327 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
-
-
     <link rel="import" href="import.html">
+</head>
 
-  <script>
+<body>
+    <script>
 
-    $(document).ready(function() {
+        var COL_NUM = 2; // config cols
+        var chartLoaded = false;
+        var data_array = [];
+        var chart_map = {};
+        // chartdata = [];
+        Chart.defaults.global.legend.display = false;
 
-      $('#navbar').load('navbar.html');
-    });
-
-    // var socket = io.connect('http://localhost:8888');
-    // var socket = io.connect('http://192.168.1.15:8888');
-    var socket = io.connect(domain);
-
-    socket.on('sensor1', function (data) {
-
-    //   $("#sensor1").text(data.raw);
-        setupSensor1(data.raw);
-
-    });
-
-    socket.on('sensor2', function (data) {
-
-    //   $("#sensor2").text(data.raw);
-        setupSensor2(data.raw);
-
-    });
-
-    // socket.on('sensor3', function (data) {
-      // $("#sensor3").text(data.raw);
-    // });
-
-    // socket.on('sensor4', function (data) {
-      // $("#sensor4").text(data.raw);
-    // });
-
-
-
-    chartdata1 = [{x:1,y:1}, {x:2,y:10}, {x:3,y:5},{x:4,y:12}];
-    chartdata2 = [{x:1,y:1}, {x:2,y:10}, {x:3,y:5},{x:4,y:12}];
-    chartdata3 = [{x:1,y:1}, {x:2,y:10}, {x:3,y:5},{x:4,y:12}];
-    chartdata4 = [{x:1,y:1}, {x:2,y:10}, {x:3,y:5},{x:4,y:12}];
-
-    var lastx = 5;
-
-    var data1 = {
-      datasets: [{
-        label: 'Vernier Ammonium (NO3)',
-        data: chartdata1,
-        backgroundColor: [
-        'rgb(27, 201, 142)',
-        ],
-        borderColor : [
-        'rgb(27, 201, 142)',
-        ],
-        fill: false,
-      }]
-    };
-
-
-    var data2 = {
-      datasets: [{
-        label: 'Vernier Nitrate (NH4)',
-        data: chartdata2,
-        backgroundColor: [
-        'rgb(230, 71, 89)',
-        ],
-        borderColor : [
-        'rgb(230, 71, 89)',
-        ],
-        fill: false,
-      }]
-    };
-
-    var data3 = {
-      datasets: [{
-        label: 'Altas pH',
-        data: chartdata3,
-        backgroundColor: [
-        'rgb(159, 134, 255)',
-        ],
-        borderColor : [
-        'rgb(159, 134, 255)',
-        ],
-        fill: false,
-      }]
-    };
-
-
-    var data4 = {
-      datasets: [{
-        label: 'Altas ORP',
-        data: chartdata4,
-        backgroundColor: [
-        'rgb(228, 216, 54)',
-        ],
-        borderColor : [
-        'rgb(228, 216, 54)',
-        ],
-        fill: false,
-      }]
-    };
-    var options =  {
-        scales: {
-            xAxes: [{
-                type: 'linear',
-                position: 'bottom'
-            }]
-        },
-
-        title:{
-            display : false,
-            text : 'Title',
+        function composeGrid(num) {
+            var cols = COL_NUM;
+            var total_width = 12;
+            var width = total_width / cols;
+            document.write("<div class='container'>");
+            for (var i = 0; i < Math.ceil(num / cols); i++) {
+                document.write("<div class='row'>");
+                var jn;
+                if (i != Math.ceil(num / cols) - 1) {
+                    jn = cols;
+                } else {
+                    jn = num % cols == 0 ? cols : num % cols;
+                }
+                for (var j = 0; j < jn; j++) {
+                    var index = i * cols + j;
+                    var cell = composeCell(index);
+                    document.write("<div class='col-sm-" + width + "'>" + cell + "</div>");
+                }
+                document.write("</div>");
+            }
+            document.write("</div>");
         }
-    };
 
-    var chart1, chart2, chart3, chart4;
-
-    window.onload = function() {
-
-      var ctx1 = document.getElementById("chart1");
-      chart1 = new Chart(ctx1, {
-        type: 'line',
-        data: data1,
-        options : options,
-      });
-
-      var ctx2 = document.getElementById("chart2");
-      chart2 = new Chart(ctx2, {
-        type: 'line',
-        data: data2,
-        options : options,
-      });
-
-      var ctx3 = document.getElementById("chart3");
-      chart3 = new Chart(ctx3, {
-        type: 'line',
-        data: data3,
-        options : options,
-      });
-
-      var ctx4 = document.getElementById("chart4");
-      chart4 = new Chart(ctx4, {
-        type: 'line',
-        data: data4,
-        options : options,
-      });
-
-    }
-
-    function setupSensor1(data) {
-
-        $("#sensor1").text(data);
-
-        if (chartdata1.length >= 10) {chartdata1.shift()}
-
-        var time = new Date();
-        var time_format = time.getHours() + ':' + time.getMinutes() + ':'+time.getSeconds();
-        console.log(time_format);
-
-        chartdata1.push({x: lastx, y : data});
-        lastx += 1;
-        chart1.data.datasets[0].data = chartdata1;
-        chart1.update();
-
-    }
-
-    function setupSensor2(data) {
-
-        $("#sensor2").text(data);
-
-        if (chartdata2.length >= 10) {chartdata2.shift()}
-        chartdata2.push({x: lastx, y : data});
-        lastx += 1;
-        chart2.data.datasets[0].data = chartdata2;
-        chart2.update();
-
-    }
-
-/*
-    setInterval(function() {
-
-      if (chartdata1.length >= 10) {chartdata1.shift()}
-      if (chartdata2.length >= 10) {chartdata2.shift()}
-      if (chartdata3.length >= 10) {chartdata3.shift()}
-      if (chartdata4.length >= 10) {chartdata4.shift()}
-
-      chartdata1.push({x: lastx, y : Math.random() * 10});
-      chartdata2.push({x: lastx, y : Math.random() * 10});
-      // chartdata3.push({x: lastx, y : Math.random() * 10});
-      // chartdata4.push({x: lastx, y : Math.random() * 10});
-
-      lastx += 1;
-            // chartdata.shift();
-
-            console.log("1 second");
-            chart1.data.datasets[0].data = chartdata1;
-            // myChart.data.datasets[0].data
-            chart1.update();
-
-            chart2.data.datasets[0].data = chartdata2;
-            // myChart.data.datasets[0].data
-            chart2.update();
-
-            chart3.data.datasets[0].data = chartdata3;
-            // myChart.data.datasets[0].data
-            // chart3.update();
-
-            chart4.data.datasets[0].data = chartdata4;
-            // myChart.data.datasets[0].data
-            // chart4.update();
-
-          }, 3000);
-*/
-
-    function menuSelected() {
-
-      console.log("menu selected");
-
-    }
-
-
-    function calibrate() {
-
-      console.log("calibrate");
-      prompt("Calibrate");
-
-    }
-
-        </script>
-
-      </head>
-
-      <body>
-
-        <div id="navbar"></div>
-
-
-
-
-
-
-
-
-
-
-
-
-            <div class="container-fluid">
-
-
-
-
-              <div class="row">
-
-                    <div class="col-md-6">
-                      <div class="sensor-name-label">Vernier Ammonium (NO3)</div>
-                      <div class="sensor-data-label" id="sensor1"></div>
-                      <!-- <a href="#" onclick="calibrate();" class="btn btn-success" role="button">Calibrate</a> -->
-                      <canvas id="chart1"></canvas>
-                    </div>
-
-
-                    <div class="col-md-6">
-                      <div class="sensor-name-label">Vernier Nitrate (NH4)</div>
-
-                      <div class="sensor-data-label" id="sensor2"></div>
-                      <!-- <a href="csvfile.csv" class="btn btn-success" role="button">Calibrate</a> -->
-                      <canvas id="chart2"></canvas>
-                    </div>
-
-              </div>
-
-
-              <div class="row">
-
-                    <div class="col-md-6">
-
-                      <div class="sensor-name-label">Altas pH</div>
-
-                      <div class="sensor-data-label" id="sensor3"></div>
-                      <!-- <a href="csvfile.csv" class="btn btn-success" role="button">Calibrate</a> -->
-                      <canvas id="chart3"></canvas>
-                    </div>
-
-                    <div class="col-md-6">
-
-                      <div class="sensor-name-label">Altas ORP</div>
-
-                      <div class="sensor-data-label" id="sensor4"></div>
-                      <!-- <a href="csvfile.csv" class="btn btn-success" role="button">csv download</a> -->
-                      <canvas id="chart4"></canvas>
-                    </div>
-
-              </div>
-
-
-
+        function composeGrid2(num) {
+            var cols = COL_NUM;
+            var total_width = 12;
+            var width = total_width / cols;
+            // document.write("<div class='container'>");
+
+            var container_div = document.createElement("div");
+            container_div.setAttribute("class", "container");
+
+            for (var i = 0; i < Math.ceil(num / cols); i++) {
+                // document.write("<div class='row'>");
+
+                var row_div = document.createElement("div");
+                row_div.setAttribute("class", "row");
+
+                var jn;
+                if (i != Math.ceil(num / cols) - 1) {
+                    jn = cols;
+                } else {
+                    jn = num % cols == 0 ? cols : num % cols;
+                }
+                for (var j = 0; j < jn; j++) {
+                    var index = i * cols + j;
+                    var cell = composeCell(index);
+                    // document.write("<div class='col-sm-" + width + "'>" + cell + "</div>");
+
+                    var col_div = document.createElement("div");
+                    col_div.setAttribute("class", "col-sm-" + width);
+
+                    // var canvas_div = document.createElement("canvas");
+                    // canvas_div.setAttribute("id", data_array[index]["sensor_id"]);
+                    var canvas_div = composeCell(index);
+                    col_div.appendChild(canvas_div);
+
+                    var buttons_div = composeButtons(index);
+                    // col_div.appendChild(buttons_div);
+
+                    var calibrate_btn_div = composeCalibrateButton(index);
+                    // col_div.appendChild(calibrate_btn_div);
+
+                    row_div.appendChild(col_div);
+                }
+                // document.write("</div>");
+                container_div.appendChild(row_div);
+            }
+            // document.write("</div>");
+            var body_DOM = document.getElementsByTagName("BODY")[0];
+            body_DOM.appendChild(container_div);
+        }
+
+        function composeCell(index) {
+            var canvas_div = document.createElement("canvas");
+            var sensor_id = data_array[index]["sensor_id"];
+            canvas_div.setAttribute("id", sensor_id);
+            return canvas_div;
+        }
+
+        function composeButtons(index) {
+            var button_group = document.createElement("div");
+            button_group.setAttribute("class", "btn-group");
+            button_group.setAttribute("role", "group");
+
+            var btn1 = document.createElement("button");
+            btn1.setAttribute("type", "button");
+            btn1.setAttribute("class", "btn btn-default");
+            btn1.innerText = "12 Hours";
+
+            var btn2 = document.createElement("button");
+            btn2.setAttribute("type", "button");
+            btn2.setAttribute("class", "btn btn-default");
+            btn2.innerText = "30 Minutes";
+
+            var btn3 = document.createElement("button");
+            btn3.setAttribute("type", "button");
+            btn3.setAttribute("class", "btn btn-default");
+            btn3.innerText = "20 Seconds";
+
+            button_group.appendChild(btn1);
+            button_group.appendChild(btn2);
+            button_group.appendChild(btn3);
+
+            return button_group;
+        }
+
+        function composeCalibrateButton(index) {
+            var btn = document.createElement("button");
+            btn.setAttribute("type", "button");
+            btn.setAttribute("class", "btn btn-success pull-right");
+            btn.setAttribute("data-toggle", "modal");
+            btn.setAttribute("data-target", "#myModal");
+            btn.innerText = "Calibrate";
+            // btn.addEventListener("click", function(e) {
+            //     var sensor_id = data_array[index]["sensor_id"];
+            //     console.log("calibrate " + sensor_id);
+            //     presentCalibrateModelView();
+            // });
+            return btn;
+        }
+
+        function presentCalibrateModelView() {
+
+        }
+
+        window.onload = initSocketConnect;
+        // document.ready = initSocketConnect;
+        // composeGrid(8);
+
+        function initSocketConnect() {
+            var socket = io.connect(domain);
+
+            socket.on("update_frontend", function(data_map) {
+
+                data_array.length = 0;
+                for (var sensor_id in data_map) {
+                    data_array.push(data_map[sensor_id]);
+                }
+                data_array.sort(function(data1, data2) {
+                    return data1.sensor_id.localeCompare(data2.sensor_id);
+                });
+
+                if (!chartLoaded) {
+                    var sensor_num = data_array.length;
+                    composeGrid2(sensor_num);
+                    initChart(data_array);
+                    chartLoaded = true;
+                }
+                updateChart();
+                // console.log(data_array);
+            });
+        }
+
+        function initChart(data_array) {
+
+            var chart_num = data_array.length;
+            // var chart_num = 8;
+
+            for (var i = 0; i < chart_num; i++) {
+
+                var data_map = data_array[i];
+                var sensor_id = data_map["sensor_id"];
+
+                var color = getColor(i);
+
+                // var chartdata = [{ x: 1, y: 0 }, { x: 2, y: 0 }, { x: 3, y: 0 }, { x: 4, y: 0 }];
+                var chartdata = [];
+
+                var data = {
+                    datasets: [{
+                        label: sensor_id,
+                        data: chartdata,
+                        backgroundColor: [
+                            // 'rgb(27, 201, 142)',
+                            color,
+                        ],
+                        borderColor: [
+                            // 'rgb(27, 201, 142)',
+                            color,
+                        ],
+                        fill: false,
+                        steppedLine : false,
+                    }]
+                };
+
+                var chart_option =
+                {
+                    scales : {
+                        xAxes : [{
+                            display : true,
+                            // type : 'linear',
+                            type : 'time',
+                            distribution: 'linear',//series
+                            time : {
+                                displayFormats: {
+                                    second: 'h:mm:ss'
+                                },
+                                unit: 'second',
+                            }}]
+                    },
+                    title : {
+                        display : true,
+                        text : 'Title',
+                        fontColor : color,
+                        fontSize : 20,
+                    },
+                    // elements: {
+                    //     line: {
+                    //         tension: 0, // disables bezier curves
+                    //     }
+                    // },
+                };
+
+                var ctx = document.getElementById(sensor_id).getContext('2d');
+
+                var chart = new Chart(ctx, {
+                    type: 'line',
+                    data: data,
+                    options: chart_option,
+                });
+                chart_map[sensor_id] = chart;
+            }
+
+        };
+
+        function updateChart() {
+
+            data_array.forEach(function(data_map, index) {
+
+                var sensor_id = data_map["sensor_id"];
+                var chart = chart_map[sensor_id];
+                var data = data_map["sensor_data"];
+                data = getRandomInt(50, 100); // DEBUG
+                var unit = data_map["unit"];
+                var date = data_map["received_date"];
+                var label = sensor_id + " : " + data + " " + unit;
+
+                var chartdata = chart.data.datasets[0].data;
+                if (chartdata.length >= 20) {
+                    chartdata.shift();
+                }
+                //var last_coordinate = chartdata[chartdata.length - 1];
+                //var last_x = last_coordinate["x"];
+                //var x = last_x + 1;
+                // chartdata = [{ x: 1, y: 0 }, { x: 2, y: 0 }, { x: 3, y: 0 }, { x: 4, y: 0 }];
+
+                chartdata.push({
+                    "x": date,
+                    "y": data
+                });
+                // chart.data.datasets[0].data = chartdata;
+                chart.data.datasets[0].label = label;
+                chart.options.title.text = label;
+                chart.update();
+
+                console.log(data_map);
+            });
+        }
+        function getColor(index)
+        {
+            var colorPool = ['rgb(27, 201, 142)', 'rgb(230, 71, 89)', 'rgb(159, 134, 255)', 'rgb(228, 216, 54)'];
+            return colorPool[index % colorPool.length];
+        }
+        function getRandomColor()
+        {
+            return "rgb(" + getRandomInt(0, 255) + "," + getRandomInt(0, 255) + "," + getRandomInt(0, 255) + ")";
+        }
+        function getRandomInt(min, max)
+        {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min)) + min;
+        }
+    </script>
+
+    <!-- <div class="container">
+        <div class="row">
+            <div class="col-sm-3">1</div>
+            <div class="col-sm-3">2</div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">3</div>
+            <div class="col-sm-3">4</div>
+        </div>
+    </div> -->
+
+    <!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Calibration</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save</button>
+      </div>
     </div>
+  </div>
+</div>
 
+</body>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      </body>
-      </html>
+</html>

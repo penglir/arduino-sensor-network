@@ -4,16 +4,23 @@
   "description": "Testing node, web sockets, johnny-five, arduino",
   "main": "webtest.js",
   "dependencies": {
-    "express": "^4.15.2",
-    "formidable": "^1.1.1",
+    "convert-csv-to-json": "0.0.11",
+    "express": "latest",
+    "formidable": "latest",
     "fs": "latest",
     "http": "latest",
     "johnny-five": "latest",
+    "mkdirp": "^0.5.1",
+    "moment": "^2.19.2",
+    "mongodb": "^2.2.33",
     "path": "latest",
-    "socket.io": "latest"
+    "socket.io": "latest",
+    "usb": "^1.2.0",
+    "usb-detection": "^1.4.2"
   },
   "devDependencies": {},
   "scripts": {
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
