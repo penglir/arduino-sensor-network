@@ -15,7 +15,7 @@
     "mongodb": "^2.2.33",
     "path": "latest",
     "socket.io": "latest",
-    "usb": "^1.2.0",
+    "usb": "^1.2.0"
   },
   "devDependencies": {},
   "scripts": {
