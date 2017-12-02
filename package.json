@@ -1,8 +1,8 @@
 {
-  "name": "node-arduino-test",
-  "version": "0.0.1",
-  "description": "Testing node, web sockets, johnny-five, arduino",
-  "main": "webtest.js",
+  "name": "arduino-sensor-network",
+  "version": "1.0.0",
+  "description": "master degree project",
+  "main": "server.js",
   "dependencies": {
     "convert-csv-to-json": "0.0.11",
     "express": "latest",
@@ -16,13 +16,12 @@
     "path": "latest",
     "socket.io": "latest",
     "usb": "^1.2.0",
-    "usb-detection": "^1.4.2"
   },
   "devDependencies": {},
   "scripts": {
     "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Peng Li",
   "license": "MIT"
 }

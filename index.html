@@ -8,37 +8,37 @@
 <body>
     <script>
 
+        var DEBUG = false;
         var COL_NUM = 2; // config cols
         var chartLoaded = false;
         var data_array = [];
         var chart_map = {};
-        // chartdata = [];
+        var calibrate_low_buffer = [];
+        var calibrate_high_buffer = [];
+        var calibrating_sensor_id = '';
+        var calibrate_buffer = {};
+
+        var CalibrateStateEnum = {
+              None: 1,
+              Low: 2,
+              High: 3,
+        };
+
+        var socket;
+
+        var calibrate_state = CalibrateStateEnum.None;
+
         Chart.defaults.global.legend.display = false;
 
-        function composeGrid(num) {
-            var cols = COL_NUM;
-            var total_width = 12;
-            var width = total_width / cols;
-            document.write("<div class='container'>");
-            for (var i = 0; i < Math.ceil(num / cols); i++) {
-                document.write("<div class='row'>");
-                var jn;
-                if (i != Math.ceil(num / cols) - 1) {
-                    jn = cols;
-                } else {
-                    jn = num % cols == 0 ? cols : num % cols;
-                }
-                for (var j = 0; j < jn; j++) {
-                    var index = i * cols + j;
-                    var cell = composeCell(index);
-                    document.write("<div class='col-sm-" + width + "'>" + cell + "</div>");
-                }
-                document.write("</div>");
-            }
-            document.write("</div>");
-        }
+        // $( document ).ready(function() {
+        //     var alert = document.getElementById('alert_calibrate_success');
+        //     var alert2 = $('#alert_calibrate_success');
+        //     alert2.hide();
+        //     // $('alert_calibrate_success').hide();
+        //     console.log(alert2);
+        // });
 
-        function composeGrid2(num) {
+        function composeGrid(num) {
             var cols = COL_NUM;
             var total_width = 12;
             var width = total_width / cols;
@@ -76,7 +76,7 @@
                     // col_div.appendChild(buttons_div);
 
                     var calibrate_btn_div = composeCalibrateButton(index);
-                    // col_div.appendChild(calibrate_btn_div);
+                    col_div.appendChild(calibrate_btn_div);
 
                     row_div.appendChild(col_div);
                 }
@@ -123,16 +123,23 @@
         }
 
         function composeCalibrateButton(index) {
+
+            var sensor_id = data_array[index]["sensor_id"];
+
             var btn = document.createElement("button");
             btn.setAttribute("type", "button");
             btn.setAttribute("class", "btn btn-success pull-right");
             btn.setAttribute("data-toggle", "modal");
-            btn.setAttribute("data-target", "#myModal");
+            btn.setAttribute("data-target", "#calibrate_modal");
             btn.innerText = "Calibrate";
+
+            btn.setAttribute("sensor_id", sensor_id);
             // btn.addEventListener("click", function(e) {
             //     var sensor_id = data_array[index]["sensor_id"];
-            //     console.log("calibrate " + sensor_id);
-            //     presentCalibrateModelView();
+            //     // console.log("calibrate " + sensor_id);
+            //     calibrating_sensor_id = sensor_id;
+            //
+            //     $("#calibrate_modal").modal("show");
             // });
             return btn;
         }
@@ -143,10 +150,9 @@
 
         window.onload = initSocketConnect;
         // document.ready = initSocketConnect;
-        // composeGrid(8);
 
         function initSocketConnect() {
-            var socket = io.connect(domain);
+            socket = io.connect(domain);
 
             socket.on("update_frontend", function(data_map) {
 
@@ -160,12 +166,13 @@
 
                 if (!chartLoaded) {
                     var sensor_num = data_array.length;
-                    composeGrid2(sensor_num);
+                    composeGrid(sensor_num);
                     initChart(data_array);
                     chartLoaded = true;
                 }
                 updateChart();
                 // console.log(data_array);
+                updateCalibrateView();
             });
         }
 
@@ -246,34 +253,84 @@
             data_array.forEach(function(data_map, index) {
 
                 var sensor_id = data_map["sensor_id"];
-                var chart = chart_map[sensor_id];
-                var data = data_map["sensor_data"];
-                data = getRandomInt(50, 100); // DEBUG
-                var unit = data_map["unit"];
-                var date = data_map["received_date"];
-                var label = sensor_id + " : " + data + " " + unit;
+                if (chart_map.hasOwnProperty(sensor_id))
+                {
+                    var chart = chart_map[sensor_id];
+                    var data = data_map["sensor_data"];
+                    if (DEBUG)
+                    {
+                        data = getRandomInt(50, 100); // DEBUG
+                    }
+                    var unit = data_map["unit"];
+                    var date = data_map["received_date"];
+                    var label = sensor_id + " : " + data + " " + unit;
 
-                var chartdata = chart.data.datasets[0].data;
-                if (chartdata.length >= 20) {
-                    chartdata.shift();
+                    var chartdata = chart.data.datasets[0].data;
+                    if (chartdata.length >= 20) {
+                        chartdata.shift();
+                    }
+                    //var last_coordinate = chartdata[chartdata.length - 1];
+                    //var last_x = last_coordinate["x"];
+                    //var x = last_x + 1;
+                    // chartdata = [{ x: 1, y: 0 }, { x: 2, y: 0 }, { x: 3, y: 0 }, { x: 4, y: 0 }];
+
+                    chartdata.push({
+                        "x": date,
+                        "y": data
+                    });
+                    // chart.data.datasets[0].data = chartdata;
+                    chart.data.datasets[0].label = label;
+                    chart.options.title.text = label;
+                    chart.update();
+
+                    console.log(data_map);
                 }
-                //var last_coordinate = chartdata[chartdata.length - 1];
-                //var last_x = last_coordinate["x"];
-                //var x = last_x + 1;
-                // chartdata = [{ x: 1, y: 0 }, { x: 2, y: 0 }, { x: 3, y: 0 }, { x: 4, y: 0 }];
-
-                chartdata.push({
-                    "x": date,
-                    "y": data
-                });
-                // chart.data.datasets[0].data = chartdata;
-                chart.data.datasets[0].label = label;
-                chart.options.title.text = label;
-                chart.update();
-
-                console.log(data_map);
             });
         }
+
+        function updateCalibrateView()
+        {
+            if (calibrate_state == CalibrateStateEnum.None) return;
+
+            data_array.forEach(function(data_map, index) {
+
+                var sensor_id = data_map["sensor_id"];
+                if (sensor_id == calibrating_sensor_id)
+                {
+                    if (sensor_id == calibrating_sensor_id)
+                    var data = data_map["sensor_data"];
+
+                    var unit = data_map["unit"];
+                    var date = data_map["received_date"];
+                    var voltage = data_map["sensor_voltage"];
+                    var label = voltage + ' mV';
+
+                    var textarea;
+
+                    if (calibrate_state == CalibrateStateEnum.Low)
+                    {
+                        textarea = document.getElementById('calibrate_low_textarea');
+                        calibrate_low_buffer.push(voltage);
+                        textarea.value = textarea.value == '' ? label : textarea.value + '\n' + label;
+                        $('#calibrate_low_textarea').animate({scrollTop: $('#calibrate_low_textarea').prop("scrollHeight")}, 500);
+                    }
+                    else if (calibrate_state == CalibrateStateEnum.High)
+                    {
+                        textarea = document.getElementById('calibrate_high_textarea');
+                        calibrate_high_buffer.push(voltage);
+                        textarea.value = textarea.value == '' ? label : textarea.value + '\n' + label;
+                        $('#calibrate_high_textarea').animate({scrollTop: $('#calibrate_high_textarea').prop("scrollHeight")}, 500);
+                    }
+                    // textarea.scrollTop = textarea.scrollHeight;
+                    // $('calibrate_low_textarea').val(label);
+
+                    // textarea.append(label).animate({scrollTop: textarea.prop("scrollHeight")}, 500);
+
+                    console.log(data_map);
+                }
+            });
+        }
+
         function getColor(index)
         {
             var colorPool = ['rgb(27, 201, 142)', 'rgb(230, 71, 89)', 'rgb(159, 134, 255)', 'rgb(228, 216, 54)'];
@@ -289,6 +346,183 @@
             max = Math.floor(max);
             return Math.floor(Math.random() * (max - min)) + min;
         }
+
+        // $('#calibrate_modal').on('show.bs.modal', function(e) {
+        //
+        //     console.log('modal view pull up');
+        //
+        //     //get data-id attribute of the clicked element
+        //     var bookId = $(e.relatedTarget).data('sensor_id');
+        //     console.log(bookId);
+        //
+        //     //populate the textbox
+        //     //$(e.currentTarget).find('input[name="bookId"]').val(bookId);
+        // });
+
+        $(document).on('show.bs.modal','#calibrate_modal', function (e) {
+            var button = e.relatedTarget;
+            var sensor_id = button.getAttribute("sensor_id");
+            calibrating_sensor_id = sensor_id;
+            var title = sensor_id + ' Calibration';
+            $('#calibrate_modal_label').text(title);
+
+            calibrateViewWillShow();
+        });
+
+        $(document).on('hide.bs.modal','#calibrate_modal', function (e) {
+            calibrating_sensor_id = '';
+            calibrateViewDidHide()
+            refresh_config();
+        });
+
+        function refresh_config()
+        {
+
+        }
+
+        function calibrateViewWillShow()
+        {
+            $('#calibrate_low_textarea').value = '';
+            $('#calibrate_high_textarea').value = '';
+            $('#calibrate_step1_mark').hide();
+            $('#calibrate_step2_mark').hide();
+            $('#calibrate_step3_mark').hide();
+        }
+
+        function calibrateViewDidHide()
+        {
+            calibrate_low_buffer.length = 0;
+            calibrate_low_buffer.length = 0;
+        }
+
+        $(document).on('click', '#calibrate_low_start_button', function (e) {
+            console.log('calibrate_low_start_button');
+            calibrate_state = CalibrateStateEnum.Low;
+        })
+        $(document).on('click', '#calibrate_low_stop_button', function (e) {
+            console.log('calibrate_low_stop_button');
+            calibrate_state = CalibrateStateEnum.None;
+            $('#calibrate_step1_mark').show();
+        })
+        $(document).on('click', '#calibrate_high_start_button', function (e) {
+            console.log('calibrate_high_start_button');
+            calibrate_state = CalibrateStateEnum.High;
+        })
+        $(document).on('click', '#calibrate_high_stop_button', function (e) {
+            console.log('calibrate_low_stop_button');
+            calibrate_state = CalibrateStateEnum.None;
+            $('#calibrate_step2_mark').show();
+        })
+        $(document).on('click', '#calculate_parameters_button', function (e) {
+
+            console.log('calculate_parameters_button');
+            console.log(calibrate_low_buffer);
+            console.log(calibrate_high_buffer);
+
+            var input_text1 = $('#calibrate_low_concentration');
+            var input_text2 = $('#calibrate_high_concentration');
+
+            var low_concentration = parseFloat($('#calibrate_low_concentration').val());
+            var high_concentration = parseFloat($('#calibrate_high_concentration').val());
+
+            var x1 = Math.log(low_concentration);
+            var x2 = Math.log(high_concentration);
+
+            var y1 = getMean(calibrate_low_buffer);
+            var y2 = getMean(calibrate_high_buffer)
+
+            var p1 = [x1, y1];
+            var p2 = [x2, y2];
+
+            console.log(p1);
+            console.log(p2);
+
+            var equation = linearFit(x1, y1, x2, y2);
+            var k = equation[0].toFixed(2);
+            var b = equation[1].toFixed(2);
+
+            console.log(k);
+            console.log(b);
+
+            // var label = 'Slope : ' + k + ' Intercept : ' + b;
+            var label = 'E = ' + b + ' + ' + k + '(lnC)';
+
+            if (b != 'NaN' && k != 'NaN')
+            {
+                $('#calibrate_step3_mark').show();
+                $('#calibrate_step3_label').text(label);
+
+                calibrate_buffer = {
+                    'sensor_id' : calibrating_sensor_id,
+                    'm' : k,
+                    'Eo' : b,
+                };
+            }
+        })
+
+        function linearFit(x1, y1, x2, y2)
+        {
+            var k, b;
+            if (x1 == x2)
+            {
+                k = Infinity;
+            }
+            else
+            {
+                k = (y1 - y2) / (x1 - x2);
+            }
+
+            b = y1 - k * x1;
+            return [k, b];
+        }
+
+        $(document).on('click', '#calibrate_cancel_button', function (e) {
+            console.log('calibrate_cancel_button');
+
+            clearMap(calibrate_buffer);
+        })
+
+        $(document).on('click', '#calibrate_done_button', function (e) {
+            console.log('calibrate_done_button');
+
+            if (validateData(calibrate_buffer))
+            {
+                socket.emit('calibrate', calibrate_buffer);
+            }
+            clearMap(calibrate_buffer);
+        })
+
+        function validateData(arr)
+        {
+            if (!arr.hasOwnProperty('sensor_id') || !arr.hasOwnProperty('Eo') || !arr.hasOwnProperty('m'))
+            {
+                return false;
+            }
+            else if (arr['Eo'] == NaN || arr['m'] == NaN)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        function clearMap(map)
+        {
+            for (var key in map)
+            {
+                delete map[key];
+            }
+        }
+
+        function getMean(arr)
+        {
+            if (arr.length == 0) return 0;
+            var sum = 0;
+            for (var i = 0, len = arr.length; i < len; i++) {
+                sum += parseFloat(arr[i]);
+            }
+            return sum / arr.length;
+        }
+
     </script>
 
     <!-- <div class="container">
@@ -303,23 +537,67 @@
     </div> -->
 
     <!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="calibrate_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
+
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Calibration</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <h3 class="modal-title" id="calibrate_modal_label" align="center">Calibration</h3>
       </div>
+
       <div class="modal-body">
+          <div class='calibrate_row'>
+              <H4>Step 1: Low Standard Calibration Point</H4>
+              <img id='calibrate_step1_mark' class='calibrate_mark' src='images/green_mark.jpg'>
+          </div>
+          <div class='calibrate_row'>
+              <input id='calibrate_low_concentration' type="text" class="form-control" style="width:45%; display:inline;">
+              <H4>mg / L</H4>
+              <button id='calibrate_low_start_button' type="button" class="btn btn-info">Start Sampling</button>
+              <button id='calibrate_low_stop_button' type="button" class="btn btn-danger">Stop Sampling</button>
+          </div>
+          <div>
+              <textarea id='calibrate_low_textarea' rows="3" cols="70" style="width:100%; margin-top:5px;"></textarea>
+          </div>
+
+          <!-- <p>&nbsp;</p> -->
+
+          <div class='calibrate_row'>
+              <H4>Step 2: High Standard Calibration Point</H4>
+              <img id='calibrate_step2_mark' class='calibrate_mark' src='images/green_mark.jpg'>
+          </div>
+          <div class='calibrate_row'>
+              <input id='calibrate_high_concentration' type="text" class="form-control" style="width:40%; display:inline;">
+              <H4>mg / L</H4>
+              <button id='calibrate_high_start_button' type="button" class="btn btn-info">Start Sampling</button>
+              <button id='calibrate_high_stop_button' type="button" class="btn btn-danger">Stop Sampling</button>
+          </div>
+          <div>
+              <textarea id='calibrate_high_textarea' rows="3" cols="70" style="width:100%; margin-top:5px;"></textarea>
+          </div>
+
+          <div class='calibrate_row'>
+              <H4>Step 3: Calculate the parameters</H4>
+              <img id='calibrate_step3_mark' class='calibrate_mark' src='images/green_mark.jpg'>
+          </div>
+          <div class='calibrate_row'>
+              <H4 id='calibrate_step3_label'></H4>
+              <button id='calculate_parameters_button' type="button" class="btn btn-info">Auto Calculate Parameters</button>
+          </div>
       </div>
+
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save</button>
+        <button id='calibrate_cancel_button' type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+        <button id='calibrate_done_button' type="button" class="btn btn-success" data-dismiss="modal">Done</button>
       </div>
+
     </div>
   </div>
+</div>
+
+<div id='alert_calibrate_success' class="alert alert-success hide">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">X</a>
+    <strong>Success!</strong> This alert box could indicate a successful or positive action.
 </div>
 
 </body>

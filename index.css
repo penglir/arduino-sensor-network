@@ -1,0 +1,35 @@
+#alert_calibrate_success111 {
+  position:fixed;
+  width:200px;
+  height:60px;
+  left:50%;
+  top:50%;
+  margin:-30px 0 0 -100px;
+  z-index: 1000;
+  display: none;
+}
+
+/*img.bottom {
+    vertical-align: middle;
+}*/
+
+#calibrate_step1_mark {
+    /*position: absolute; right: 0;*/
+    /*width : 30px;*/
+    /*float : right;*/
+}
+
+.calibrate_mark {
+    width : 30px;
+    height : 30px;
+}
+
+.calibrate_row {
+    display: flex;
+    justify-content: space-between;
+}
+
+#calibrate_step3_label {
+    color: red;
+    margin-left: 50px;
+}

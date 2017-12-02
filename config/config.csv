@@ -1,8 +1,8 @@
 sensor_id,sensor_type,sensor_description,Eo,m,unit
-Sensor-1,Vernier_Ammonium,#1 Vernier Ammonium Probe in Mines Park,204.5,19.6,mg/L
-Sensor-2,Vernier_Ammonium,#1 Vernier Ammonium Probe in Mines Park,204.5,19.6,mg/L
+Sensor-1,Vernier_Ammonium,#1 Vernier Ammonium Probe in Mines Park,263.06,-85.10,mg/L
+Sensor-2,Vernier_Ammonium,#1 Vernier Ammonium Probe in Mines Park,323,-23,mg/L
 Sensor-3,Vernier_Nitrate,#2 Vernier Nitrate Probe in Mines Park,323,-23,mg/L
-Sensor-4,Vernier_Ammonium,#1 Vernier Ammonium Probe in Mines Park,204.5,19.6,mg/L
+Sensor-4,Vernier_Ammonium,#1 Vernier Ammonium Probe in Mines Park,323,-23,mg/L
 Sensor-5,Vernier_Nitrate,#2 Vernier Nitrate Probe in Mines Park,323,-23,mg/L
 INF_NH4,Vernier_Ammonium,#1 Vernier Ammonium Probe in Mines Park,296.74,-898.56,mg/L
 INF_NO3,Vernier_Nitrate,#2 Vernier Nitrate Probe in Mines Park,-172.02,125,mg/L

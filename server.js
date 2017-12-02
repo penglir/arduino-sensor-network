@@ -11,12 +11,13 @@ var csv_schema = [];
 
 var SENSOR_ID = "sensor_id";
 var SENSOR_DATA = "sensor_data";
+var SENSOR_VOLTAGE = "sensor_voltage";
 var RECEIVED_DATE = "received_date";
 var VERNIER_AMMONIUM = "Vernier_Ammonium";
 var VERNIER_NITRATE = "Vernier_Nitrate";
 var SENSOR_TYPE = "sensor_type";
-var EO = "Eo";
-var M = "m";
+var EO = "Eo"; // b y=kx+b
+var M = "m";   // k y=kx+b
 var UNIT = "unit";
 var UPDATE_FRONTEND = "update_frontend";
 
@@ -39,7 +40,7 @@ function init()
     loadConfigFile();
 
     port.on('data', function (raw_data) {
-        // console.log(raw_data);
+        console.log(raw_data);
         if (!validateData(raw_data))
         {
             console.log('data received is invalid.');
@@ -95,6 +96,17 @@ function printForCalibration(raw_data)
     var raw_voltage = analog_reading / 1023 * 5.0;
     var voltage = 137.55 * raw_voltage - 0.1682;
     console.log(sensor_id + ' voltage' + ' : ' + voltage.toFixed(2) + ' mV');
+}
+
+function voltageForCalibration(raw_data)
+{
+    data = raw_data.replace('\r', ''); // data from Arduino will ended with a '\r'
+    var raw_data_array = raw_data.split('#');
+    var sensor_id = raw_data_array[0];
+    var analog_reading = raw_data_array[1]
+    var raw_voltage = analog_reading / 1023 * 5.0;
+    var voltage = 137.55 * raw_voltage - 0.1682;
+    return voltage.toFixed(2);
 }
 
 // web server hanlder
@@ -166,7 +178,104 @@ var websocket = null;
 io.sockets.on('connection', function (socket) {
     websocket = socket;
     console.log("websocket connected");
+
+    websocket.on('calibrate', function (arr) {
+        console.log('receive calibrate paras from frontend');
+        console.log(arr);
+        if (!arr.hasOwnProperty(SENSOR_ID) || !arr.hasOwnProperty(EO) || !arr.hasOwnProperty(M))
+        {
+            console.log('invalid calibrate parameters received from frontend.');
+        }
+        else
+        {
+            writeConfigFile(arr);
+        }
+    });
 });
+
+function writeConfigFile(paras)
+{
+    // var paras = {
+    //                 SENSOR_ID : 'Sensor-1',
+    //                 M : 10,
+    //                 EO : 20,
+    //             };
+
+    var to_be_update_sensor_id = paras[SENSOR_ID];
+    var eo = paras[EO];  // b
+    var m = paras[M];   // k
+
+    // refresh config data in memory
+    if (!sensor_config_map.hasOwnProperty(to_be_update_sensor_id))
+    {
+        console.log('invalid sensor id to be updated');
+    }
+    else
+    {
+        var sensor_config = sensor_config_map[to_be_update_sensor_id];
+        sensor_config[EO] = eo;
+        sensor_config[M] = m;
+    }
+
+    // write config data to local config csv file
+    var config_file = "./config/config.csv";
+    var json = csvToJson.fieldDelimiter(',').getJsonFromCsv(config_file);
+    for(var i = 0; i < json.length; i++){
+        var sensor_config = json[i];
+        var sensor_id = sensor_config[SENSOR_ID];
+        if (sensor_id == to_be_update_sensor_id)
+        {
+            sensor_config[EO] = eo;
+            sensor_config[M] = m;
+            break;
+        }
+    }
+    // console.log(json);
+
+    var buffer = '';
+
+    // write header
+    var header = '';
+    var sensor_config = json[0];
+    for (var key in sensor_config)
+    {
+        if (header != '')
+        {
+            header += ',';
+        }
+        header += key;
+    }
+    header += '\n';
+    buffer += header;
+
+    // write body
+    for(var i = 0; i < json.length; i++){
+        var sensor_config = json[i];
+        var row = '';
+        for (var key in sensor_config)
+        {
+            if (row != '')
+            {
+                row += ',';
+            }
+            row += sensor_config[key];
+        }
+        row += '\n';
+        buffer += row;
+    }
+
+    try {
+        fs.writeFile('./config/config.csv', buffer, (err) => {
+            if (err) throw err;
+            console.log('New config file has been saved!');
+        });
+    } catch (err) {
+        if (err.code == 'EBUSY')
+        {
+            console.log('Please exit the config csv file when calibrating and try again.');
+        }
+    }
+}
 
 function loadConfigFile()
 {
@@ -199,6 +308,7 @@ function transformRawData(raw_data)
     var data_map = {};
     data_map[SENSOR_ID] = raw_data_array[0];
     data_map[SENSOR_DATA] = decodeRawData(raw_data_array[1], raw_data_array[0]);
+    data_map[SENSOR_VOLTAGE] = voltageForCalibration(raw_data);
     data_map[RECEIVED_DATE] = new Date();
     data_map[UNIT] = getUnit(raw_data_array[0]);
     return data_map;
@@ -362,84 +472,6 @@ function saveToCSV()
             outputToFileBuffer = csv_row
         }
     }
-/*
-    var i = 0;
-    for (var sensor_id in buffer)
-    {
-        var data_map = buffer[sensor_id];
-        // saveSingleDataToCSV(data_map);
-        var sensor_id = data_map[SENSOR_ID];
-        var unit = data_map[UNIT];
-        var date = new Date(data_map[RECEIVED_DATE]);
-        var data = data_map[SENSOR_DATA];
-        // var csv_row = sensor_id + ',' + data + ',' + date + '\n'
-
-        if (i > 0)
-        {
-            csv_row += ',';
-        }
-
-        csv_row += sensor_id + ',' + data + ',' + unit;
-
-        if (i == Object.keys(buffer).length - 1)
-        {
-            csv_row += ',' + date;
-            csv_row += '\n';
-
-            var year = date.getFullYear();
-            var month = date.getMonth() + 1;
-            var day = date.getDate();
-            var date_prefix = year + '-' + month + '-' + day;
-            var filename = date_prefix;
-            var extension = 'csv';
-            var full_filename = filename + '.' + extension;
-            var dir = './csv/';
-            var path = dir + full_filename;
-
-            // ensure the dir exist
-            if (!fs.existsSync(dir)) {
-                console.log('dir not exist');
-                mkdirp.sync(dir, function (err) {
-                    if (err) throw err;
-                    else console.log('dir is created');
-                });
-            }
-
-            if (!fs.existsSync(path))
-            {
-                var schema_row = "";
-                for (var i = 0; i < csv_schema.length; i++)
-                {
-                    if (i > 0)
-                    {
-                        schema_row += ",";
-                    }
-                    var item = csv_schema[i];
-                    schema_row += item;
-
-                    if (i == csv_schema.length - 1)
-                    {
-                        schema_row += '\n';
-                    }
-                }
-
-                // write csv schema for the first row
-                fs.appendFile(path, schema_row, function (err){
-                    if (err) throw err;
-                    //console.log('data append to ' + path);
-                });
-            }
-            // write sensor record to local csv file
-            fs.appendFile(path, csv_row, function (err){
-                if (err) throw err;
-                //console.log('data append to ' + path);
-            });
-        }
-
-        i++;
-    }
-
-    */
 }
 
 // per 60 seconds
