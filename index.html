@@ -382,8 +382,13 @@
 
         function calibrateViewWillShow()
         {
-            $('#calibrate_low_textarea').value = '';
-            $('#calibrate_high_textarea').value = '';
+            $('#calibrate_low_textarea').val('');
+            $('#calibrate_high_textarea').val('');
+
+            $('#calibrate_low_concentration').val('');
+            $('#calibrate_high_concentration').val('');
+            $('#calibrate_step3_label').text('');
+
             $('#calibrate_step1_mark').hide();
             $('#calibrate_step2_mark').hide();
             $('#calibrate_step3_mark').hide();
@@ -547,11 +552,11 @@
 
       <div class="modal-body">
           <div class='calibrate_row'>
-              <H4>Step 1: Low Standard Calibration Point</H4>
+              <H4>Step 1 : Low Standard Calibration Point</H4>
               <img id='calibrate_step1_mark' class='calibrate_mark' src='images/green_mark.jpg'>
           </div>
           <div class='calibrate_row'>
-              <input id='calibrate_low_concentration' type="text" class="form-control" style="width:45%; display:inline;">
+              <input id='calibrate_low_concentration' type="text" class="form-control" style="width:40%; display:inline;">
               <H4>mg / L</H4>
               <button id='calibrate_low_start_button' type="button" class="btn btn-info">Start Sampling</button>
               <button id='calibrate_low_stop_button' type="button" class="btn btn-danger">Stop Sampling</button>
@@ -563,7 +568,7 @@
           <!-- <p>&nbsp;</p> -->
 
           <div class='calibrate_row'>
-              <H4>Step 2: High Standard Calibration Point</H4>
+              <H4>Step 2 : High Standard Calibration Point</H4>
               <img id='calibrate_step2_mark' class='calibrate_mark' src='images/green_mark.jpg'>
           </div>
           <div class='calibrate_row'>
@@ -577,7 +582,7 @@
           </div>
 
           <div class='calibrate_row'>
-              <H4>Step 3: Calculate the parameters</H4>
+              <H4>Step 3 : Calculate Parameters</H4>
               <img id='calibrate_step3_mark' class='calibrate_mark' src='images/green_mark.jpg'>
           </div>
           <div class='calibrate_row'>
@@ -588,7 +593,7 @@
 
       <div class="modal-footer">
         <button id='calibrate_cancel_button' type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
-        <button id='calibrate_done_button' type="button" class="btn btn-success" data-dismiss="modal">Done</button>
+        <button id='calibrate_done_button' type="button" class="btn btn-success" data-dismiss="modal">Save</button>
       </div>
 
     </div>

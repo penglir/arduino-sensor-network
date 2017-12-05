@@ -6,6 +6,10 @@ var path = require("path");
 var csvToJson = require('convert-csv-to-json'); // read and parse sensor calibration csv file
 var moment = require('moment');
 
+var MongoClient = require('mongodb').MongoClient;
+var url = "mongodb://localhost:27017/asn";
+var record_collection = "record";
+
 var sensor_config_map = {}; // key value pair
 var csv_schema = [];
 
@@ -21,7 +25,8 @@ var M = "m";   // k y=kx+b
 var UNIT = "unit";
 var UPDATE_FRONTEND = "update_frontend";
 
-var SERIAL_PORT = "/dev/cu.usbserial-AD02AHUU";
+// var SERIAL_PORT = "/dev/cu.usbserial-AD02AHUU";
+var SERIAL_PORT = "COM14";
 
 init();
 
@@ -513,6 +518,30 @@ function saveSingleDataToCSV(data_map)
 
 function saveToDB(data)
 {
+    var records = [];
+    for (var sensor_id in buffer)
+    {
+        var data_map = buffer[sensor_id];
+        records.push(data_map);
+    }
+    if (records.length == 0)
+    {
+        return;
+    }
+
+    MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      db.createCollection(record_collection, function(err, res) {
+        if (err) throw err;
+        console.log("Collection was created!");
+        db.close();
+      });
+      db.collection(record_collection).insertMany(records, function(err, res) {
+        if (err) throw err;
+        console.log("One record document was inserted");
+        db.close();
+      });
+    });
 }
 
 function clearBuffer()
