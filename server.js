@@ -6,6 +6,7 @@ var path = require("path");
 var csvToJson = require('convert-csv-to-json'); // read and parse sensor calibration csv file
 var moment = require('moment');
 
+// for database
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://localhost:27017/asn";
 var record_collection = "record";
@@ -36,16 +37,21 @@ function init()
     console.log("*  Please go to localhost:8888 in browser to open dashboard  *");
     console.log("**************************************************************");
 
+    // init the serial port
     var serialport = require('serialport');
     var port = new serialport(SERIAL_PORT, {
         baudRate: 57600,
         parser: serialport.parsers.readline("\n")
     });
 
+    // load config parameters for sensor calibration
     loadConfigFile();
 
+    // callback function when the serial port receive data
     port.on('data', function (raw_data) {
         console.log(raw_data);
+
+        // make sure the data received is valid
         if (!validateData(raw_data))
         {
             console.log('data received is invalid.');
@@ -53,16 +59,20 @@ function init()
         }
         printForCalibration(raw_data);
         var single_sensor_data_map = transformRawData(raw_data);
-        saveToBuffer(single_sensor_data_map); // data buffer hold all sensor data for latest sec
+
+        // data buffer hold all sensor data for latest sec
+        saveToBuffer(single_sensor_data_map);
         // saveToCSV(data);     // per 60 secs
         // saveToDB(data);      // to do list
         // sendToFrontend();       // per 1 sec
     });
 
-    setInterval(persistData, 60000); // DEBUG
+    // repeat timer for persistData() and updateFrontend()
+    setInterval(persistData, 60000);
     setInterval(updateFrontend, 3000);
 }
 
+// received data validate
 function validateData(raw_data)
 {
     if (typeof raw_data == 'undefined')
@@ -91,9 +101,11 @@ function validateData(raw_data)
     return true;
 }
 
+// for Kate to calibrate
 function printForCalibration(raw_data)
 {
-    data = raw_data.replace('\r', ''); // data from Arduino will ended with a '\r'
+    // data from Arduino will ended with a '\r'
+    data = raw_data.replace('\r', '');
     var raw_data_array = raw_data.split('#');
 
     var sensor_id = raw_data_array[0];
@@ -103,6 +115,7 @@ function printForCalibration(raw_data)
     console.log(sensor_id + ' voltage' + ' : ' + voltage.toFixed(2) + ' mV');
 }
 
+// convert the raw data to voltage
 function voltageForCalibration(raw_data)
 {
     data = raw_data.replace('\r', ''); // data from Arduino will ended with a '\r'
@@ -157,6 +170,7 @@ function httpHandler (req, res) {
         break;
   }
 
+  // check if the file exists
   fs.exists(filePath, function(exists) {
 
     if (exists) {
@@ -184,6 +198,7 @@ io.sockets.on('connection', function (socket) {
     websocket = socket;
     console.log("websocket connected");
 
+    // receive calibrate notification from frontend webpage
     websocket.on('calibrate', function (arr) {
         console.log('receive calibrate paras from frontend');
         console.log(arr);
@@ -193,6 +208,7 @@ io.sockets.on('connection', function (socket) {
         }
         else
         {
+            // update the config file
             writeConfigFile(arr);
         }
     });
@@ -269,6 +285,7 @@ function writeConfigFile(paras)
         buffer += row;
     }
 
+    // check if the resource is busy (maybe another software is opening it)
     try {
         fs.writeFile('./config/config.csv', buffer, (err) => {
             if (err) throw err;
@@ -282,6 +299,7 @@ function writeConfigFile(paras)
     }
 }
 
+// load config parameters from the local config file
 function loadConfigFile()
 {
     csv_schema.push("Date");
@@ -298,6 +316,7 @@ function loadConfigFile()
     }
 }
 
+// it will contain a \r in the end of every line
 function removeRCharacter(sensor_config)
 {
     for (var key in sensor_config)
@@ -306,9 +325,11 @@ function removeRCharacter(sensor_config)
     }
 }
 
+// convert the raw data into the display data
 function transformRawData(raw_data)
 {
-    data = raw_data.replace('\r', ''); // data from Arduino will ended with a '\r'
+    // data from Arduino will ended with a '\r'
+    data = raw_data.replace('\r', '');
     var raw_data_array = raw_data.split('#');
     var data_map = {};
     data_map[SENSOR_ID] = raw_data_array[0];
@@ -319,6 +340,7 @@ function transformRawData(raw_data)
     return data_map;
 }
 
+// use the calibration parameters to decode the received raw data
 function decodeRawData(raw_data, sensor_id)
 {
     var result = null;
@@ -350,6 +372,7 @@ function decodeRawData(raw_data, sensor_id)
     return result;
 }
 
+// get the unit from the config file to display
 function getUnit(sensor_id)
 {
     var sensor_config = sensor_config_map[sensor_id];
@@ -357,6 +380,7 @@ function getUnit(sensor_id)
 }
 
 var buffer = {};
+// save the data into a buffer in case the file to be writen is locking
 function saveToBuffer(data_map)
 {
     buffer[data_map[SENSOR_ID]] = data_map;
@@ -370,6 +394,7 @@ function persistData()
 }
 
 var outputToFileBuffer = '';
+// append the new data to the CSV file
 function saveToCSV()
 {
     var csv_row = '';
@@ -428,6 +453,7 @@ function saveToCSV()
         });
     }
 
+    // creat the file if it doesn't exist
     if (!fs.existsSync(path))
     {
         var schema_row = "";
@@ -479,7 +505,7 @@ function saveToCSV()
     }
 }
 
-// per 60 seconds
+// save the data for per 60 seconds
 function saveSingleDataToCSV(data_map)
 {
     var sensor_id = data_map[SENSOR_ID];
@@ -516,6 +542,7 @@ function saveSingleDataToCSV(data_map)
     });
 }
 
+// save the data to database
 function saveToDB(data)
 {
     var records = [];
@@ -544,6 +571,7 @@ function saveToDB(data)
     });
 }
 
+// clear the buffer
 function clearBuffer()
 {
     for (var sensor_id in buffer)
@@ -552,6 +580,7 @@ function clearBuffer()
     }
 }
 
+// send the data to front-end webpage to update
 function updateFrontend()
 {
     if (websocket != null)
